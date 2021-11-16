@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+  name: puppet-sneakernet
+spec:
+  backend:
+    serviceName: puppet-sneakernet
+    servicePort: 80
+  rules:
+  - host: prod.puppet-sneakernet.k8s.puppet.net
+    http:
+      paths:
+      - backend:
+          serviceName: puppet-sneakernet
+          servicePort: 80
+        path: /
+  tls:
+  - secretName: puppet-sneakernet
+    hosts:
+    - prod.puppet-sneakernet.k8s.puppet.net

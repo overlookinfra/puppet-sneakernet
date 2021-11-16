@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    deployment: puppet-sneakernet
+  name: puppet-sneakernet
+  namespace: community-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: puppet-sneakernet
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        deployment: puppet-sneakernet
+    spec:
+      containers:
+      - name: puppet-sneakernet
+        image: gcr.io/puppetlabs.com/api-project-531226060619/puppet-sneakernet:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9000
+          protocol: TCP
+      imagePullSecrets:
+      - name: regcred
+      restartPolicy: Always

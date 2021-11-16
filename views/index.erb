@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>Puppet Sneakernet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/solid.min.css">
+  <link rel="stylesheet" href="/styles.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="/scripts.js"></script>
+</head>
+<body>
+  <a href="https://github.com/puppetlabs/puppet-sneakernet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+  <h1>Puppet Sneakernet</h1>
+  <h2>Paste a <code>Puppetfile</code> into the following textbox, then download the environment it represents as a tarball.</h2>
+
+  <form action="/download" method="post">
+    <% if settings.csrf %><input name="_csrf", type="hidden" value="<%= session[:csrf] %>" /><% end %>
+    <div class="entry">
+      <textarea name="code" id="code" cols="65" rows="25"> </textarea>
+      <div class="row">
+        <input type="submit" value="Download" id="download">
+      </div>
+    </div>
+  </form>
+
+  <div class="info">
+    <div class="column">
+      <p>
+        <i class="fas fa-info-circle fa-3x" aria-hidden="true"></i>
+        When you press the download button, the service will resolve the dependencies of
+        your <code>Puppetfile</code>, create an environment from them, and then pack the
+        whole thing into a tarball. Save that tarball to a USB key, then perform any review
+        or approval required by your security and quality policies.
+      </p>
+      <p>
+        Once approved, walk the USB key with the modules tarball across your air-gap
+        and uncompress them into your codebase. For example:
+        <code><pre>$ cd /etc/puppetlabs/code/environments/staging
+$ tar -xvzf /media/USB/Puppetfile.packed.&lt;date&gt;.tar.gz --strip-components=1</pre></code>
+      </p>
+      <p>
+        We recommend using an MD5 checksum to prove that the tarball you deploy is the
+        same as the tarball you get approved. You can generate that with one of the
+        following commands, depending on your platform.
+        <ul>
+          <li><code>md5 Puppetfile.packed.&lt;date&gt;.tar.gz &gt; md5sum</code></li>
+          <li><code>md5sum Puppetfile.packed.&lt;date&gt;.tar.gz &gt; md5sum</code></li>
+        </ul>
+      </p>
+    </div>
+    <div class="column">
+      <p>
+        <i class="fas fa-exclamation-triangle fa-3x" aria-hidden="true"></i>
+        Resolving dependencies in a <code>Puppetfile</code> means installing code that
+        you didn't specifically request into your environment. Make sure you audit the
+        modules from the tarball, not just code from the source repositories of the
+        modules you specified in your <code>Puppetfile</code>.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

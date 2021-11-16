@@ -1,0 +1,14 @@
+## MAC OS
+.DS_Store
+
+*.swp
+.nova
+
+tmp
+*.gem
+.bundle
+Gemfile.lock
+.rvmrc
+.rake_t_cache
+vendor
+
