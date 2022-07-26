@@ -1,0 +1,30 @@
+name: 'Commit: Build and push image to puppet-artifacts Google Artifact Registry'
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release:
+    env:
+      ARTIFACT_REGISTRY_PATH: 'us-west1-docker.pkg.dev/puppet-artifacts/community-ecosystem'
+      IMAGE_NAME: 'puppet-sneakernet'
+      IMAGE_TAG: ${GITHUB_SHA}
+      PUBLISHER_PREFIX: 'community-ecosystem'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: google-auth
+        uses: google-github-actions/auth@v0
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: 'projects/427026933618/locations/global/workloadIdentityPools/puppet-artifacts/providers/github'
+          service_account: '${{ env.PUBLISHER_PREFIX }}-publisher@puppet-artifacts.iam.gserviceaccount.com'
+      - id: setup-pack
+        uses: buildpacks/github-actions/setup-pack@v4.7.0
+      - name: Authenticate to Google Artifact Registry
+        run: gcloud --quiet auth configure-docker us-west1-docker.pkg.dev
+      - name: Build and publish image
+        run: pack build --builder=gcr.io/buildpacks/builder --publish "${{ env.ARTIFACT_REGISTRY_PATH }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
